@@ -11,4 +11,6 @@
 
 class Hotel < ApplicationRecord
   has_many :room_types
+
+  validates :name, :address, presence: true
 end

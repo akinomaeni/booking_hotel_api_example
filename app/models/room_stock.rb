@@ -12,4 +12,6 @@
 
 class RoomStock < ApplicationRecord
   belongs_to :room
+
+  validates :room, :start_at, :end_at, presence: true
 end
