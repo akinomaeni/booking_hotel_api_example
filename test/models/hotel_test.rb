@@ -3,8 +3,8 @@
 # Table name: hotels
 #
 #  id         :integer          not null, primary key
-#  name       :string
-#  address    :string
+#  name       :string           not null
+#  address    :string           not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #

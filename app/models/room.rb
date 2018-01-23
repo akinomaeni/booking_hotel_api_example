@@ -3,9 +3,8 @@
 # Table name: rooms
 #
 #  id           :integer          not null, primary key
-#  name         :string
-#  number       :integer
-#  room_type_id :integer
+#  name         :string           not null
+#  room_type_id :integer          not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #

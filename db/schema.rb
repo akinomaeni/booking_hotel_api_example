@@ -13,10 +13,10 @@
 ActiveRecord::Schema.define(version: 20180123062620) do
 
   create_table "bookings", force: :cascade do |t|
-    t.integer "user_id"
-    t.integer "room_id"
-    t.datetime "start_at"
-    t.datetime "end_at"
+    t.integer "user_id", null: false
+    t.integer "room_id", null: false
+    t.datetime "start_at", null: false
+    t.datetime "end_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["room_id"], name: "index_bookings_on_room_id"
@@ -24,40 +24,39 @@ ActiveRecord::Schema.define(version: 20180123062620) do
   end
 
   create_table "hotels", force: :cascade do |t|
-    t.string "name"
-    t.string "address"
+    t.string "name", null: false
+    t.string "address", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "room_stocks", force: :cascade do |t|
-    t.integer "room_id"
-    t.datetime "start_at"
-    t.datetime "end_at"
+    t.integer "room_id", null: false
+    t.datetime "start_at", null: false
+    t.datetime "end_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["room_id"], name: "index_room_stocks_on_room_id"
   end
 
   create_table "room_types", force: :cascade do |t|
-    t.string "name"
-    t.integer "hotel_id"
+    t.string "name", null: false
+    t.integer "hotel_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["hotel_id"], name: "index_room_types_on_hotel_id"
   end
 
   create_table "rooms", force: :cascade do |t|
-    t.string "name"
-    t.integer "number"
-    t.integer "room_type_id"
+    t.string "name", null: false
+    t.integer "room_type_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["room_type_id"], name: "index_rooms_on_room_type_id"
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "name"
+    t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
