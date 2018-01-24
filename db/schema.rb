@@ -12,9 +12,9 @@
 
 ActiveRecord::Schema.define(version: 20180124131517) do
 
-  create_table "bookings", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.integer "room_id", null: false
+  create_table "bookings", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
+    t.bigint "user_id", null: false
+    t.bigint "room_id", null: false
     t.date "first_night_on", null: false
     t.date "last_night_on", null: false
     t.datetime "created_at", null: false
@@ -23,8 +23,8 @@ ActiveRecord::Schema.define(version: 20180124131517) do
     t.index ["user_id"], name: "index_bookings_on_user_id"
   end
 
-  create_table "chargings", force: :cascade do |t|
-    t.integer "booking_id"
+  create_table "chargings", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
+    t.bigint "booking_id"
     t.integer "amount"
     t.string "currency"
     t.datetime "created_at", null: false
@@ -32,15 +32,15 @@ ActiveRecord::Schema.define(version: 20180124131517) do
     t.index ["booking_id"], name: "index_chargings_on_booking_id"
   end
 
-  create_table "hotels", force: :cascade do |t|
+  create_table "hotels", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
     t.string "name", null: false
     t.string "address", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "room_stocks", force: :cascade do |t|
-    t.integer "room_id", null: false
+  create_table "room_stocks", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
+    t.bigint "room_id", null: false
     t.date "date", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -48,26 +48,33 @@ ActiveRecord::Schema.define(version: 20180124131517) do
     t.index ["room_id"], name: "index_room_stocks_on_room_id"
   end
 
-  create_table "room_types", force: :cascade do |t|
+  create_table "room_types", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
     t.string "name", null: false
-    t.integer "hotel_id", null: false
+    t.bigint "hotel_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["hotel_id"], name: "index_room_types_on_hotel_id"
   end
 
-  create_table "rooms", force: :cascade do |t|
+  create_table "rooms", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
     t.string "name", null: false
-    t.integer "room_type_id", null: false
+    t.bigint "room_type_id", null: false
+    t.integer "price", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["room_type_id"], name: "index_rooms_on_room_type_id"
   end
 
-  create_table "users", force: :cascade do |t|
+  create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4" do |t|
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "bookings", "rooms"
+  add_foreign_key "bookings", "users"
+  add_foreign_key "chargings", "bookings"
+  add_foreign_key "room_stocks", "rooms"
+  add_foreign_key "room_types", "hotels"
+  add_foreign_key "rooms", "room_types"
 end

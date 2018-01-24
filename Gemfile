@@ -7,8 +7,8 @@ end
 
 gem 'rails', '~> 5.1.4'
 
+gem 'mysql2'
 gem 'puma', '~> 3.7'
-gem 'sqlite3'
 gem 'stripe'
 
 group :development, :test do

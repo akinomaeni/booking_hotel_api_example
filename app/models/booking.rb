@@ -14,19 +14,23 @@
 class Booking < ApplicationRecord
   belongs_to :user
   belongs_to :room
+  has_many :chargings
 
   validates :user, :room, :first_night_on, :last_night_on, presence: true
 
-  def self.make(user, room, first_night_on, last_night_on)
+  def self.make(user, room, first_night_on, last_night_on, stripe_email:, stripe_token:)
     b = Booking.new(user: user, room: room, first_night_on: first_night_on, last_night_on: last_night_on)
     transaction do
-      stocks = room.room_stocks.where(date: b.duration)
-      if b.number_of_nights > stocks.size
+      stocks = room.room_stocks.where(date: b.duration).lock.load
+      if stocks.size < b.number_of_nights
         return false
       end
 
-      stocks.destroy
+      stocks.destroy_all
       b.save
+
+      Charging.charge(b, stripe_email, stripe_token)
+      b
     end
   end
 

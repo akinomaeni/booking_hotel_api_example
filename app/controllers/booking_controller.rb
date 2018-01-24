@@ -2,7 +2,14 @@ class BookingController < ApplicationController
   before_action :authenticate, :set_room
 
   def create
-    b = Booking.make(@current_user, @room, Date.parse(params[:first_night_on]), Date.params(params[:last_night_on]))
+    b = Booking.make(
+      @current_user,
+      @room,
+      Date.parse(params[:first_night_on]),
+      Date.parse(params[:last_night_on]),
+      stripe_email: params[:stripeEmail],
+      stripe_token:  params[:stripeToken]
+    )
 
     if b
       render json: {
@@ -26,6 +33,6 @@ class BookingController < ApplicationController
   private
 
   def set_room
-    @room = Room.find(params[:room_id]).include(:hotel)
+    @room = Room.includes(:hotel).find(params[:room_id])
   end
 end
