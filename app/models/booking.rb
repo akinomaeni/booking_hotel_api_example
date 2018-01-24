@@ -15,13 +15,13 @@ class Booking < ApplicationRecord
   belongs_to :user
   belongs_to :room
 
-  validates :user, :room, :start_at, :end_at, presence: true
+  validates :user, :room, :first_night_on, :last_night_on, presence: true
 
   def self.make(user, room, duration)
-    b = Booking.new(user: user, room: room, start_at: duration.first, end_at: duration.last)
+    b = Booking.new(user: user, room: room, first_night_on: duration.first, last_night_on: duration.last)
     transaction do
-      stocks = room.room_stocks.where(start_at: duration)
-      if count_months < stocks.size
+      stocks = room.room_stocks.where(date: duration)
+      if b.number_of_nights < stocks.size
         return false
       end
 
@@ -30,7 +30,7 @@ class Booking < ApplicationRecord
     end
   end
 
-  def count_months
-    (end_at.year - start_at.year) * 12 + end_at.month - start_at.month + 1
+  def number_of_nights
+    (last_night_on - first_night_on).to_i + 1
   end
 end

@@ -15,8 +15,8 @@ ActiveRecord::Schema.define(version: 20180123062620) do
   create_table "bookings", force: :cascade do |t|
     t.integer "user_id", null: false
     t.integer "room_id", null: false
-    t.datetime "start_at", null: false
-    t.datetime "end_at", null: false
+    t.date "first_night_on", null: false
+    t.date "last_night_on", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["room_id"], name: "index_bookings_on_room_id"
@@ -32,10 +32,10 @@ ActiveRecord::Schema.define(version: 20180123062620) do
 
   create_table "room_stocks", force: :cascade do |t|
     t.integer "room_id", null: false
-    t.datetime "start_at", null: false
-    t.datetime "end_at", null: false
+    t.date "date", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["room_id", "date"], name: "index_room_stocks_on_room_id_and_date", unique: true
     t.index ["room_id"], name: "index_room_stocks_on_room_id"
   end
 
