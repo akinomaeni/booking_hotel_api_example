@@ -4,8 +4,7 @@
 #
 #  id         :integer          not null, primary key
 #  room_id    :integer          not null
-#  start_at   :datetime         not null
-#  end_at     :datetime         not null
+#  date       :date             not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
