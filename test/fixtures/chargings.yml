@@ -1,0 +1,23 @@
+# == Schema Information
+#
+# Table name: chargings
+#
+#  id         :integer          not null, primary key
+#  booking_id :integer
+#  amount     :integer
+#  currency   :string
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#
+
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  booking: one
+  amount: 1
+  currency: MyString
+
+two:
+  booking: two
+  amount: 1
+  currency: MyString
