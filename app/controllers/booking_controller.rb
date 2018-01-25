@@ -24,12 +24,8 @@ class BookingController < ApplicationController
           address:    b.room.hotel.address
         }
       }, status: 201
-    elsif b.errors.message == "The payment was failed."
-      render json: { error: { message: b.errors.message } }, status: 402
-    elsif b.errors.message == "The room is not available."
-      render json: { error: { message: b.errors.message } }, status: 409
     else
-      render json: { error: { message: "Invalid request" } }, status: 400
+      render json: { errors: b.errors }, status: 400
     end
   end
 

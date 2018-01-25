@@ -17,8 +17,8 @@ class Booking < ApplicationRecord
   has_one :charging
 
   validates :user, :room, :first_night_on, :last_night_on, presence: true
-  def charge
-    c = charging.new(amount: price, currency: Charging::USD)
+  def charge(stripe_email, stripe_token)
+    c = build_charging(amount: price, currency: Charging::USD)
     c.exec(stripe_email, stripe_token)
   end
 
@@ -36,13 +36,13 @@ class Booking < ApplicationRecord
     transaction do
       stocks = room.room_stocks.where(date: duration).lock.load
       if stocks.size < number_of_nights
-        self.errors.message = "The room is not available."
+        errors.add(:base, :room_is_not_available, message: "The room is not available.")
         return false
       end
       stocks.destroy_all
 
       unless charge(stripe_email, stripe_token)
-        self.errors.message = "The payment was failed."
+        errors.add(:base, :payment_failed, message: "The payment was failed.")
         return false
       end
       save
