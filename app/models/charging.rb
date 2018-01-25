@@ -28,7 +28,7 @@ class Charging < ApplicationRecord
     )
 
     save
-  rescue Stripe::StripeError => e
+  rescue Stripe::CardError, Stripe::InvalidRequestError => e
     logger.error e.class
     logger.error e.message
     logger.error e.backtrace.join("\n")
