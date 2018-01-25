@@ -2,37 +2,40 @@ class BookingController < ApplicationController
   before_action :authenticate, :set_room
 
   def create
-    b = Booking.make(
-      @current_user,
-      @room,
-      Date.parse(params[:first_night_on]),
-      Date.parse(params[:last_night_on]),
-      stripe_email: params[:stripeEmail],
-      stripe_token:  params[:stripeToken]
+    b = Booking.new(
+      user: @current_user,
+      room: @room,
+      first_night_on: Date.parse(params[:firstNightOn]),
+      last_night_on: Date.parse(params[:lastNightOn])
     )
 
-    if b
+    if b.make(params[:stripeEmail], params[:stripeToken])
       render json: {
-        id: b.id,
-        first_night_on: b.first_night_on,
-        last_night_on: b.last_night_on,
+        id:           b.id,
+        firstNightOn: b.first_night_on,
+        lastNightOn:  b.last_night_on,
         room: {
-          id: b.room.id,
-          name: b.room.name
+          id:         b.room.id,
+          name:       b.room.name
         },
         hotel: {
-          id: b.room.hotel.id,
-          name: b.room.hotel.name
+          id:         b.room.hotel.id,
+          name:       b.room.hotel.name,
+          address:    b.room.hotel.address
         }
       }, status: 201
+    elsif b.errors.message == "The payment was failed."
+      render json: { error: { message: b.errors.message } }, status: 402
+    elsif b.errors.message == "The room is not available."
+      render json: { error: { message: b.errors.message } }, status: 409
     else
-      render json: { error: { message: "Error" } }, status: 400
+      render json: { error: { message: "Invalid request" } }, status: 400
     end
   end
 
   private
 
   def set_room
-    @room = Room.includes(:hotel).find(params[:room_id])
+    @room = Room.includes(:hotel).find(params[:roomId])
   end
 end

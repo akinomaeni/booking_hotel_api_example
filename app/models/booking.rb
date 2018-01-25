@@ -14,23 +14,38 @@
 class Booking < ApplicationRecord
   belongs_to :user
   belongs_to :room
-  has_many :chargings
+  has_one :charging
 
   validates :user, :room, :first_night_on, :last_night_on, presence: true
+  def charge
+    c = charging.new(amount: price, currency: Charging::USD)
+    c.exec(stripe_email, stripe_token)
+  end
 
-  def self.make(user, room, first_night_on, last_night_on, stripe_email:, stripe_token:)
-    b = Booking.new(user: user, room: room, first_night_on: first_night_on, last_night_on: last_night_on)
+  def description
+    "#{room.name} #{room.hotel.name} #{first_night_on} - #{last_night_on}"
+  end
+
+  def duration
+    first_night_on..last_night_on
+  end
+
+  def make(stripe_email, stripe_token)
+    return unless new_record?
+
     transaction do
-      stocks = room.room_stocks.where(date: b.duration).lock.load
-      if stocks.size < b.number_of_nights
+      stocks = room.room_stocks.where(date: duration).lock.load
+      if stocks.size < number_of_nights
+        self.errors.message = "The room is not available."
         return false
       end
-
       stocks.destroy_all
-      b.save
 
-      Charging.charge(b, stripe_email, stripe_token)
-      b
+      unless charge(stripe_email, stripe_token)
+        self.errors.message = "The payment was failed."
+        return false
+      end
+      save
     end
   end
 
@@ -38,7 +53,7 @@ class Booking < ApplicationRecord
     duration.count
   end
 
-  def duration
-    first_night_on..last_night_on
+  def price
+    room.price * number_of_nights
   end
 end

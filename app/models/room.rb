@@ -16,5 +16,5 @@ class Room < ApplicationRecord
   has_many :room_stocks
   has_one :hotel, through: :room_type
 
-  validates :name, :room_type, presence: true
+  validates :name, :room_type, :price, presence: true
 end

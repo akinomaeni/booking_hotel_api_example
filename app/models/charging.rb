@@ -16,25 +16,22 @@ class Charging < ApplicationRecord
 
   belongs_to :booking
 
-  def self.charge(booking, stripe_email, stripe_token)
-
-    c = booking.chargings.new(
-      amount: booking.room.price * booking.number_of_nights,
-      currency: USD
-    )
+  def exec(stripe_email, stripe_token)
+    return unless new_record?
 
     customer = Stripe::Customer.create(email: stripe_email, source: stripe_token)
-
-    charge = Stripe::Charge.create(
-      :customer    => customer.id,
-      :amount      => c.amount,
-      :description => "#{booking.room.name} #{booking.room.hotel.name} #{booking.first_night_on} - #{booking.last_night_on}",
-      :currency    => c.currency
+    Stripe::Charge.create(
+      customer:    customer.id,
+      amount:      amount,
+      description: booking.description,
+      currency:    currency
     )
 
-    c.save
-  rescue Stripe::CardError => e
-    flash[:error] = e.message
-    redirect_to new_charge_path
+    save
+  rescue Stripe::StripeError => e
+    logger.error e.class
+    logger.error e.message
+    logger.error e.backtrace.join("\n")
+    false
   end
 end
